@@ -21,7 +21,7 @@ class PostController extends Controller
 
         if ($route == 'posts.show') {
             $posts = Post::where('user_id', $user->id)->orderBy('updated_at', 'desc')->get();
-
+            
             return view('posts.show', compact('posts'));
         }
         $posts = User::find($user->id)->posts()->orderBy('updated_at', 'desc')->get();
@@ -37,7 +37,7 @@ class PostController extends Controller
         // } else {
         //     $posts = Post::all();
         // }
-        $posts = Post::orderBy('updated_at', 'desc')->get();
+        $posts = Post::orderBy('updated_at', 'desc')->paginate(7);
         return view('posts.index', compact('posts'));
     }
     public function create()

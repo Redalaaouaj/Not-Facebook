@@ -22,6 +22,6 @@
         </div>
     </div>
     @endforeach
-
+    {{$posts->links('pagination::bootstrap-5')}}
 </div>
 @endsection
