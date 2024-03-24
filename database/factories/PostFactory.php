@@ -17,7 +17,7 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->title(),
+            'title' => fake()->name(),
             'description' => fake()->paragraph(),
             'user_id' => fake()->numberBetween(1, 5),
         ];
