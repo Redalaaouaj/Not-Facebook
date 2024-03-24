@@ -20,8 +20,14 @@ class PostController extends Controller
         $route = request()->route()->getName();
 
         if ($route == 'posts.show') {
-            $posts = Post::where('user_id', $user->id)->orderBy('updated_at', 'desc')->get();
-            
+            $posts = Post::where('user_id', $user->id)->orderBy('updated_at', 'desc');
+
+            if (request()->has('title') && request()->filled('title')) {
+                $title = request()->query('title');
+                $posts->where('title', 'like', '%' . $title . '%');
+            }
+            $posts = $posts->get();
+
             return view('posts.show', compact('posts'));
         }
         $posts = User::find($user->id)->posts()->orderBy('updated_at', 'desc')->get();
@@ -29,7 +35,13 @@ class PostController extends Controller
     }
     public function index()
     {
-
+        $title = request()->query('title');
+        if ($title) {
+            $posts = Post::where('title', 'like', '%' . $title . '%')->orderBy('updated_at', 'desc')->paginate(7);
+        } else {
+            $posts = Post::orderBy('updated_at', 'desc')->paginate(7);
+        }
+        
         // if (request()->has('title')) {
         //     $posts = Post::whereHas('user', function ($query) {
         //         $query->where('title', 'like', '%' . request()->query('title') . '%');
@@ -37,7 +49,6 @@ class PostController extends Controller
         // } else {
         //     $posts = Post::all();
         // }
-        $posts = Post::orderBy('updated_at', 'desc')->paginate(7);
         return view('posts.index', compact('posts'));
     }
     public function create()
@@ -47,7 +58,7 @@ class PostController extends Controller
     public function store()
     {
         $validatedData = request()->validate([
-            'title' => 'required|string|max:20',
+            'title' => 'required|string|max:30',
             'description' => 'required|min:10',
         ]);
         $validatedData['user_id'] = auth()->user()->id;
@@ -65,7 +76,7 @@ class PostController extends Controller
         $this->authorize('update',$post);
 
         $validatedData = request()->validate([
-            'title' => 'required|string|max:20',
+            'title' => 'required|string|max:30',
             'description' => 'required|min:10',
         ]);
         $validatedData['user_id'] = auth()->user()->id;
