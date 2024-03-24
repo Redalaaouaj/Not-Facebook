@@ -16,28 +16,13 @@ class LoginController extends Controller
     }
     public function connect(Request $request)
     {
-        // $users = User::all();
-        // foreach ($users as $user) {
-        //     $user->password = Hash::make($user->password);
-        //     $user->save();
-        // }
-
         $credentials = $request->only('email','password');
-        // $credentials = [
-        //     'email' => $request->input('email'),
-        //     'password' => $request->get('password')
-        // ];
-
-        // if (Auth::attempt($credentials)) {
-        //     return "Authentication successful";
-        // } else {
-        //     return "Authentication failed";
-        // }
-        // dd(Auth::attempt($credentials));
-        if(Auth::attempt($credentials)){
+        
+        if(Auth::attempt($credentials, $request->filled('remember'))){
             $request->session()->regenerate();
             return to_route('posts.show');
-        }else{
+        }
+        else{
             return back()->withErrors([
                 'email' => 'Email / Password incorrect !!!'
             ])->onlyInput('email');
